@@ -3,8 +3,11 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/pocketbase/pocketbase/tools/types"
+	"github.com/spf13/cast"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/microsoft"
 )
@@ -17,6 +20,10 @@ var _ Provider = (*Microsoft)(nil)
 
 // NameMicrosoft is the unique name of the Microsoft provider.
 const NameMicrosoft string = "microsoft"
+
+// extraIdTokenEmailClaim is the name of the extra map entry that
+// specifies which email extraction method to use
+const extraIdTokenEmailClaim string = "idTokenEmailClaim"
 
 // Microsoft allows authentication via AzureADEndpoint OAuth2.
 type Microsoft struct {
@@ -41,8 +48,9 @@ func NewMicrosoftProvider() *Microsoft {
 
 // FetchAuthUser returns an AuthUser instance based on the Microsoft's user api.
 //
-// API reference:  https://learn.microsoft.com/en-us/azure/active-directory/develop/userinfo
-// Graph explorer: https://developer.microsoft.com/en-us/graph/graph-explorer
+// Graph explorer:  https://developer.microsoft.com/en-us/graph/graph-explorer
+// API reference:   https://learn.microsoft.com/en-us/graph/api/user-get
+// Optional claims: https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims-reference
 func (p *Microsoft) FetchAuthUser(token *oauth2.Token) (*AuthUser, error) {
 	data, err := p.FetchRawUserInfo(token)
 	if err != nil {
@@ -55,9 +63,9 @@ func (p *Microsoft) FetchAuthUser(token *oauth2.Token) (*AuthUser, error) {
 	}
 
 	extracted := struct {
-		Id    string `json:"id"`
-		Name  string `json:"displayName"`
-		Email string `json:"mail"`
+		Id   string `json:"id"`
+		Name string `json:"displayName"`
+		Mail string `json:"mail"`
 	}{}
 	if err := json.Unmarshal(data, &extracted); err != nil {
 		return nil, err
@@ -66,7 +74,6 @@ func (p *Microsoft) FetchAuthUser(token *oauth2.Token) (*AuthUser, error) {
 	user := &AuthUser{
 		Id:           extracted.Id,
 		Name:         extracted.Name,
-		Email:        extracted.Email,
 		RawUser:      rawUser,
 		AccessToken:  token.AccessToken,
 		RefreshToken: token.RefreshToken,
@@ -74,5 +81,82 @@ func (p *Microsoft) FetchAuthUser(token *oauth2.Token) (*AuthUser, error) {
 
 	user.Expiry, _ = types.ParseDateTime(token.Expiry)
 
+	// decide which email to trust and assign
+	switch p.extra[extraIdTokenEmailClaim] {
+	case "any_verified":
+		user.Email = p.extractIdTokenVerifiedPrimaryEmail(token)
+		if user.Email == "" {
+			user.Email = p.extractIdTokenVerifiedXmsEdovEmail(token)
+		}
+	case "verified_primary_email":
+		user.Email = p.extractIdTokenVerifiedPrimaryEmail(token)
+	case "email_and_xms_edov":
+		user.Email = p.extractIdTokenVerifiedXmsEdovEmail(token)
+	case "email":
+		user.Email = p.extractIdTokenEmail(token)
+	default:
+		// This is kept to avoid introducing breaking changes and generally
+		// it is considered safe because the provider was originally created
+		// for single-tenants apps. Furthermore the value is expected to be
+		// synced with the id_token's `email` claim which since 2023
+		// by *default* would be empty if it is unverified.
+		user.Email = extracted.Mail
+	}
+
 	return user, nil
+}
+
+func (p *Microsoft) extractIdTokenClaims(trustedIdToken *oauth2.Token) (jwt.MapClaims, error) {
+	idToken, _ := trustedIdToken.Extra("id_token").(string)
+	if idToken == "" {
+		return nil, errors.New("empty id_token")
+	}
+
+	claims := jwt.MapClaims{}
+	_, _, err := jwt.NewParser().ParseUnverified(idToken, claims)
+	if err != nil {
+		return nil, err
+	}
+
+	// loosely validate common claims
+	// (we don't check the signature because the token is expected to be
+	// from a trusted source, usually from a direct TLS communication with the provider)
+	jwtValidator := jwt.NewValidator(
+		jwt.WithIssuedAt(),
+		jwt.WithLeeway(idTokenLeeway),
+	)
+	err = jwtValidator.Validate(claims)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
+}
+
+func (p *Microsoft) extractIdTokenVerifiedPrimaryEmail(trustedIdToken *oauth2.Token) string {
+	claims, _ := p.extractIdTokenClaims(trustedIdToken)
+
+	email, _ := claims["verified_primary_email"].(string)
+
+	return email
+}
+
+func (p *Microsoft) extractIdTokenVerifiedXmsEdovEmail(trustedIdToken *oauth2.Token) string {
+	claims, _ := p.extractIdTokenClaims(trustedIdToken)
+
+	if !cast.ToBool(claims["xms_edov"]) {
+		return ""
+	}
+
+	email, _ := claims["email"].(string)
+
+	return email
+}
+
+func (p *Microsoft) extractIdTokenEmail(trustedIdToken *oauth2.Token) string {
+	claims, _ := p.extractIdTokenClaims(trustedIdToken)
+
+	email, _ := claims["email"].(string)
+
+	return email
 }
