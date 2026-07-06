@@ -1,6 +1,8 @@
 ## v0.39.6 (WIP)
 
-- (@todo prepare announcement explaining the options) Added extra hardening options to the Microsoft OAuth2 provider allowing devs to specify the preferred safe email extraction method.
+- Added `Cc` and `Bcc` recipients to the dev `sendmail` command for consistency with the SMTP mailer.
+
+- (@todo prepare announcement explaining the options) Added extra hardening options to the Microsoft OAuth2 provider allowing developers to specify the preferred safe email extraction method.
 
 - (@todo) Bumped the min Go GitHub action version to 1.26.5 as it includes some [minor security fixes](https://github.com/golang/go/issues?q=milestone%3AGo1.26.5).
 
