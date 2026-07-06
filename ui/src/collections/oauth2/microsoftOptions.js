@@ -147,6 +147,20 @@ window.app.oauth2.microsoft = function(providerInfo, namePrefix, data) {
                         },
                     }),
                 ),
+                t.div(
+                    { className: "field-help" },
+                    t.p(null, "The default minimal required scopes are: ", t.code(null, "User.Read"), () => {
+                        if (data.config.extra?.idTokenEmailClaim) {
+                            return [" and ", t.code(null, "openid"), " (for the id_token)"];
+                        }
+                    }, "."),
+                    t.p(
+                        null,
+                        "Any optional claim such as ",
+                        t.code(null, "email"),
+                        " may need to be explicitly allowed depending on your tenant setup.",
+                    ),
+                ),
             ),
         ),
     );

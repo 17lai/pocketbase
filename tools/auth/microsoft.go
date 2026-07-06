@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"slices"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pocketbase/pocketbase/tools/types"
@@ -25,7 +26,7 @@ const NameMicrosoft string = "microsoft"
 // specifies which email extraction method to use
 const extraIdTokenEmailClaim string = "idTokenEmailClaim"
 
-// Microsoft allows authentication via AzureADEndpoint OAuth2.
+// Microsoft allows authentication via Azure AD/Entra ID OAuth2.
 type Microsoft struct {
 	BaseProvider
 }
@@ -46,12 +47,30 @@ func NewMicrosoftProvider() *Microsoft {
 	}}
 }
 
+// SetExtra implements Provider.SetExtra() interface method.
+//
+// If the [extraIdTokenEmailClaim] data is set it will also add "openid"
+// to the list of default scopes in order to be able to get an id_token.
+func (p *Microsoft) SetExtra(data map[string]any) {
+	p.extra = data
+
+	if cast.ToString(p.extra[extraIdTokenEmailClaim]) != "" {
+		scopes := p.Scopes()
+		if !slices.Contains(scopes, "openid") {
+			scopes = append(scopes, "openid")
+			p.SetScopes(scopes)
+		}
+	}
+}
+
 // FetchAuthUser returns an AuthUser instance based on the Microsoft's user api.
 //
 // Graph explorer:  https://developer.microsoft.com/en-us/graph/graph-explorer
 // API reference:   https://learn.microsoft.com/en-us/graph/api/user-get
 // Optional claims: https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims-reference
 func (p *Microsoft) FetchAuthUser(token *oauth2.Token) (*AuthUser, error) {
+	// @todo with the future update to v2 endpoint consider skipping the request
+	// if id_token is available (we need to make sure that the graph's id is the same as id_token's sub!)
 	data, err := p.FetchRawUserInfo(token)
 	if err != nil {
 		return nil, err
