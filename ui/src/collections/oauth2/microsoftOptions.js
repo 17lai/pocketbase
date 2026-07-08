@@ -16,7 +16,7 @@ window.app.oauth2.microsoft = function(providerInfo, namePrefix, data) {
                     t.br(),
                     t.small(
                         { className: "txt-hint" },
-                        `Extracts the "mail" field from the Graph API /me endpoint (this is a historical default and it is generally accepted to be safe for controlled single-tenant apps).`,
+                        `Extracts the "mail" field from the Graph API /me endpoint (this is a historical default and it is generally accepted to be safe in controlled/single-tenant AD setup).`,
                     ),
                 );
             },
@@ -31,7 +31,7 @@ window.app.oauth2.microsoft = function(providerInfo, namePrefix, data) {
                     t.br(),
                     t.small(
                         { className: "txt-hint" },
-                        `Extracts the "email" token field (since June 2023 by default Microsoft will populate the field only if the email is considered verified, unless the "removeUnverifiedEmailClaim" property was disabled).`,
+                        `Extracts the "email" token field (since ~2023 by default Microsoft populates it only if the email is considered verified, unless manually configured otherwise).`,
                     ),
                 );
             },
@@ -46,7 +46,7 @@ window.app.oauth2.microsoft = function(providerInfo, namePrefix, data) {
                     t.br(),
                     t.small(
                         { className: "txt-hint" },
-                        `Extracts the "email" token field ONLY if the domain owner has been verified.`,
+                        `Extracts the "email" token field but also checks if the domain owner has been verified.`,
                     ),
                 );
             },
@@ -83,7 +83,7 @@ window.app.oauth2.microsoft = function(providerInfo, namePrefix, data) {
                         " id_token claims",
                     ),
                     t.br(),
-                    t.small({ className: "txt-hint" }, "Extracts the first nonempty value from the 2."),
+                    t.small({ className: "txt-hint" }, "Extracts the first nonempty value from the two options."),
                 );
             },
         },
