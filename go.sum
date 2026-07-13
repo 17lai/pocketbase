@@ -65,8 +65,8 @@ github.com/pocketbase/dbx v1.12.0 h1:/oLErM+A0b4xI0PWTGPqSDVjzix48PqI/bng2l0PzoA
 github.com/pocketbase/dbx v1.12.0/go.mod h1:xXRCIAKTHMgUCyCKZm55pUOdvFziJjQfXaWKhu2vhMs=
 github.com/pocketbase/ozzo-validation/v4 v4.0.0-20260713045539-28a73ec091a0 h1:1ZQ//CV8eICFduRU1e7dU4kdalNq6g4OKD0n80TaRVQ=
 github.com/pocketbase/ozzo-validation/v4 v4.0.0-20260713045539-28a73ec091a0/go.mod h1:6XNjSTw/Jb2F8LOkKO3oyzIWExbrGiYoS4uVxVwz90g=
-github.com/pocketbase/tygoja v0.0.0-20250812183945-97ffe055281f h1:ahrn66FNJYsFkO0EOTStYs+jdBKBop/anp9hoQSzZjI=
-github.com/pocketbase/tygoja v0.0.0-20250812183945-97ffe055281f/go.mod h1:hKJWPGFqavk3cdTa47Qvs8g37lnfI57OYdVVbIqW5aE=
+github.com/pocketbase/tygoja v0.1.0 h1:NJtUNHr5OlWdCyblKr8zPA9awmTv41t7LBro4EGcZ/Y=
+github.com/pocketbase/tygoja v0.1.0/go.mod h1:hKJWPGFqavk3cdTa47Qvs8g37lnfI57OYdVVbIqW5aE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
