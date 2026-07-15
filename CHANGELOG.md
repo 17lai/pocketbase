@@ -7,6 +7,9 @@
 
 - Fixed View collection `*` validator and added more friendly error messages ([#7761](https://github.com/pocketbase/pocketbase/issues/7761)).
 
+- ⚠️ Security fix for unhandled panic in internal worker goroutines ([#7762](https://github.com/pocketbase/pocketbase/discussions/7762)).
+    _To prevent this from showing again, all existing internal worker functions were wrapped with [`routine.SafeWrap(f)`](https://pkg.go.dev/github.com/pocketbase/pocketbase/tools/routine#SafeWrap) (auto recovers and returns any eventual panic as regular error)._
+
 
 ## v0.39.6
 
