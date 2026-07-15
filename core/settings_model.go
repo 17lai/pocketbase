@@ -259,6 +259,7 @@ func (s *Settings) DBExport(app App) (map[string]any, error) {
 
 	// @todo remove with encoding/json/2
 	// serialize as empty array
+	//nolint:staticcheck
 	if s.settings.SuperuserIPs == nil {
 		s.settings.SuperuserIPs = []string{}
 	}
