@@ -1,4 +1,4 @@
-## v0.39.7 (WIP)
+## v0.39.7
 
 - Replaced `github.com/go-ozzo/ozzo-validation` with the fork `github.com/pocketbase/ozzo-validation` since the original library has recently changed ownership and the new maintainer cannot be trusted.
   _There are plans to create eventually a new validation library from scratch more suited for our needs in PocketBase because ozzo-validation is known to have some minor performance and obscure regex issues, but until then we'll stick with the fork (and if you use `ozzo-validation` in your own Go code, I'd suggest to swap the imports with the fork)_.
