@@ -2,7 +2,7 @@
 
 - Properly reset JSVM global `$app` state overwrite so that pooled executors always get a clean state.
 
-- Bumped `golang.org/x/` indirect dependencies to catch up with the recent security updates.
+- Bumped `golang.org/x/*` indirect dependencies as there are some minor security fixes.
 
 - Updated `modernc.org/sqlite` to v1.54.0 ([SQLite 3.53.3](https://sqlite.org/src/timeline?from=version-3.53.2&to=version-3.53.3&to2=branch-3.53)).
 
