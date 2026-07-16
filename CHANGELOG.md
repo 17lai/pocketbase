@@ -1,3 +1,8 @@
+## v0.39.8 (WIP)
+
+- Properly reset JSVM global `$app` state overwrite so that pooled executors always get a clean state.
+
+
 ## v0.39.7
 
 - Replaced `github.com/go-ozzo/ozzo-validation` with the fork `github.com/pocketbase/ozzo-validation` since the original library has recently changed ownership and the new maintainer cannot be trusted.

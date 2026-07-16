@@ -79,10 +79,11 @@ func hooksBinds(app core.App, loader *goja.Runtime, executors *vmsPool) {
 				}
 
 				err := executors.run(func(executor *goja.Runtime) error {
-					executor.Set("$app", goja.Undefined())
+					oldApp := executor.Get("$app")
 					executor.Set("__args", handlerArgs)
 					res, err := executor.RunProgram(pr)
 					executor.Set("__args", goja.Undefined())
+					executor.Set("$app", oldApp) // reset to its default for the executor
 
 					// check for returned Go error value
 					if resErr := checkGojaValueForError(app, res); resErr != nil {
@@ -192,10 +193,12 @@ func wrapHandlerFunc(executors *vmsPool, handler goja.Value) (func(*core.Request
 
 		wrappedHandler := func(e *core.RequestEvent) error {
 			return executors.run(func(executor *goja.Runtime) error {
+				oldApp := executor.Get("$app")
 				executor.Set("$app", e.App) // overwrite the global $app with the hook scoped instance
 				executor.Set("__args", []any{e})
 				res, err := executor.RunProgram(pr)
 				executor.Set("__args", goja.Undefined())
+				executor.Set("$app", oldApp)
 
 				// check for returned Go error value
 				if resErr := checkGojaValueForError(e.App, res); resErr != nil {
@@ -247,10 +250,12 @@ func wrapMiddlewares(executors *vmsPool, rawMiddlewares ...goja.Value) ([]*hook.
 				Priority: v.priority,
 				Func: func(e *core.RequestEvent) error {
 					return executors.run(func(executor *goja.Runtime) error {
+						oldApp := executor.Get("$app")
 						executor.Set("$app", e.App) // overwrite the global $app with the hook scoped instance
 						executor.Set("__args", []any{e})
 						res, err := executor.RunProgram(pr)
 						executor.Set("__args", goja.Undefined())
+						executor.Set("$app", oldApp)
 
 						// check for returned Go error value
 						if resErr := checkGojaValueForError(e.App, res); resErr != nil {
@@ -267,10 +272,12 @@ func wrapMiddlewares(executors *vmsPool, rawMiddlewares ...goja.Value) ([]*hook.
 			wrappedMiddlewares[i] = &hook.Handler[*core.RequestEvent]{
 				Func: func(e *core.RequestEvent) error {
 					return executors.run(func(executor *goja.Runtime) error {
+						oldApp := executor.Get("$app")
 						executor.Set("$app", e.App) // overwrite the global $app with the hook scoped instance
 						executor.Set("__args", []any{e})
 						res, err := executor.RunProgram(pr)
 						executor.Set("__args", goja.Undefined())
+						executor.Set("$app", oldApp)
 
 						// check for returned Go error value
 						if resErr := checkGojaValueForError(e.App, res); resErr != nil {
