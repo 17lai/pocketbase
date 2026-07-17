@@ -1,6 +1,10 @@
 ## v0.39.8 (WIP)
 
-- Properly reset JSVM global `$app` state overwrite so that pooled executors always get a clean state.
+- Properly reset JSVM global `$app` overwrite so that pooled executors always get a clean state.
+
+- Minor UI improvements:
+    - prevent resetting number inputs with leading 0 while still typing (normalized in `onchange`)
+    -
 
 - Bumped `golang.org/x/*` indirect dependencies as there are some minor security fixes.
 
