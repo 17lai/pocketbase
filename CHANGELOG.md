@@ -1,10 +1,10 @@
-## v0.39.8 (WIP)
+## v0.39.8
 
 - Properly reset JSVM global `$app` overwrite so that pooled executors always get a clean state.
 
 - Minor UI improvements:
     - prevent resetting number inputs with leading 0 while still typing (normalized in `onchange`)
-    - added support for `Shift + Click` range bulk selection ([#7759](https://github.com/pocketbase/pocketbase/issues/7759)).
+    - added support for `Shift + Click` range bulk selection ([#7759](https://github.com/pocketbase/pocketbase/issues/7759))
 
 - Bumped `golang.org/x/*` indirect dependencies as there are some minor security fixes.
 
