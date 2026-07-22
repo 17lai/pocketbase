@@ -4,7 +4,7 @@
 
 ## v0.22.50
 
-- (_Backported from v0.39.9_) Bumped goja and fexpr and their related deps.
+- (_Backported from v0.39.9_) Bumped goja, fexpr and their related deps.
 
 
 ## v0.22.49
