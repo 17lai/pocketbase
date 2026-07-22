@@ -1,3 +1,8 @@
+## v0.39.9 (WIP)
+
+- Fixed `Shift + Click` range bulk selection not working in Firefox ([#7771](https://github.com/pocketbase/pocketbase/issues/7771))
+
+
 ## v0.39.8
 
 - Properly reset JSVM global `$app` overwrite so that pooled executors always get a clean state.
