@@ -1,4 +1,4 @@
-## v0.39.9 (WIP)
+## v0.39.9
 
 - Fixed `Shift + Click` range bulk selection not working in Firefox ([#7771](https://github.com/pocketbase/pocketbase/issues/7771))
 
